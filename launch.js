@@ -6,6 +6,11 @@
     return document.getElementById(_);
   };
 
+
+init_star = function(){
+  return init(s[0][3], s[1][0], s[2][3], s[3][3]);
+}
+
   init = function(controlType, quality, hud, godmode) {
     var hexGL, progressbar;
     hexGL = new bkcore.hexgl.HexGL({
@@ -106,11 +111,15 @@
       return window.location.href = 'http://get.webgl.org/';
     };
   } else {
-    $('start').onclick = function() {
-      $('step-1').style.display = 'none';
-      $('step-2').style.display = 'block';
-      return $('step-2').style.backgroundImage = "url(css/help-" + s[0][3] + ".png)";
-    };
+    $('step-1').style.display = 'none';
+    $('step-2').style.display = 'none';
+    $('step-3').style.display = 'none';
+    // $('start').onclick = function() {
+    //   $('step-1').style.display = 'none';
+    //   $('step-2').style.display = 'block';
+    //   return $('step-2').style.backgroundImage = "url(css/help-" + s[0][3] + ".png)";
+    // };
   }
 
 }).call(this);
+

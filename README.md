@@ -15,8 +15,8 @@ Unless specified in the file, HexGL's code and resources are now licensed under 
 	cd ~/
 	git clone git://github.com/BKcore/HexGL.git
 	cd HexGL
-	python -m SimpleHTTPServer
-	chromium index.html
+	python -m SimpleHTTPServer # or python -m http.server
+	chromium 127.0.0.1:8000/index.html
 
 To use full size textures, swap the two textures/ and textures.full/ directories.
 
