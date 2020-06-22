@@ -1,109 +1,132 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>HexGL by BKcore</title>
     <meta charset="utf-8">
-    <meta name="description" content="HexGL is a futuristic racing game built by Thibaut Despoulain (BKcore) using HTML5, Javascript and WebGL. Come challenge your friends on this fast-paced 3D game!">
-    <meta property="og:title" content="HexGL, the HTML5 futuristic racing game." />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Alpine Intuition | AI powered steering "wheel"</title>
+
+    <meta name="description" content="AI powered HexGL is a futuristic racing game initially built by Thibaut Despoulain (BKcore) using HTML5, Javascript and WebGL that has been extended by the AlpineIntuition team to include AI powered control!">
+    <meta property="og:title" content="AI HexGL, the AI Ready HTML5 futuristic racing game." />
     <meta property="og:type" content="game" />
-    <meta property="og:url" content="http://hexgl.bkcore.com/" />
+    <meta property="og:url" content="http://alpineintuition.com/ai.hexgl/" />
     <meta property="og:image" content="http://hexgl.bkcore.com/image.png" />
     <meta property="og:site_name" content="HexGL by BKcore" />
     <meta property="fb:admins" content="1482017639" />
     <link rel="icon" href="http://hexgl.bkcore.com/favicon.png" type="image/png">
     <link rel="shortcut icon" href="http://hexgl.bkcore.com/favicon.png" type="image/png">
-    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <link rel="stylesheet" href="css/multi.css" type="text/css" charset="utf-8">
-    <link rel="stylesheet" href="css/fonts.css" type="text/css" charset="utf-8">
-    <style>
-      body {
-        padding:0;
-        margin:0;
-      }
-      canvas { 
-        pointer-events:none;
-        width: 100%;
-      }
-      #overlay {
-        position: absolute;
-        z-index: 9999;
-        top: 0;
-        left: 0;
-        width: 100%;
-      }
-    </style>
-    <script type="text/javascript">
-    //analytics
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-26274524-4']);
-    _gaq.push(['_trackPageview']);
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-    </script>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
   </head>
-
   <body>
-    <div style="
-    background: tan;
-    height: 120px;
-    display: flex;
-"> AI Control <br />
-<div id="webcam-container"></div>
-<div id="label-container"></div>
-<input type="file" id="upload-model" /> : Model <br />
-<input type="file" id="upload-weights" /> : Weights <br />
-<input type="file" id="upload-metadata" /> : Metadata <br />
-<button type="button" onclick="init_star(); init_boom();">Start</button>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/pose@0.8/dist/teachablemachine-pose.min.js"></script>
-
-     </div>
-    <div id="step-1">
-      <div id="global"></div>
-      <div id="title">
-      </div>
-      <div id="menucontainer">
-        <div id="menu">
-          <div id="start">Start</div>
-          <div id="s-controlType">Controls: Keyboard</div>
-          <div id="s-quality">Quality: High</div>
-          <div id="s-hud">HUD: On</div>
-          <div id="s-godmode" style="display: none">Godmode: Off</div>
-          <div id="s-credits">Credits</div>
+  <div class="container-fluid">
+  <div class="row" height="100px" style="min-width: 100%; position: fixed;background-color:#a5a5a5; padding:5px;">
+    <div class="col-md-5">
+      <h6>
+        1. Upload your AI
+      </h6>
+      <form class="form">
+          <label class="uploadfile btn btn-info" for="metadata">metadata.json</label>
+          <input style="display:none;" type="file" class="uploadfile" id="metadata" name="metadata">
+          <label class="uploadfile btn btn-info" for="model">model.json</label>
+          <input style="display:none;" label="model.json" type="file" class="uploadfile" id="model">
+          <label class="uploadfile btn btn-info" for="weights">weights.bin</label>
+          <input style="display:none;" type="file" class="uploadfile" id="weights">
+      </form>
+    </div>
+    <div class="col-md-2" style="text-align:center;">
+      <h6>
+        2. Click START
+      </h6> 
+      <button type="button" class="btn btn-primary" onclick="init_star(); init_boom();">
+        START
+      </button>
+    </div>
+    <div class="col-md-3">
+      <h6>
+        3. Read AI outputs
+      </h6>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="progress" style="font-weight:bold; margin-bottom:2px;">
+            <div id="ai-ctrl-neutral" class="progress-bar" role="progressbar" style="width:5%; color:black; background-color:lightgrey">
+               NEUTRAL
+            </div>
+          </div>
+          <div class="progress" style="font-weight:bold; margin-bottom:2px;">
+            <div id="ai-ctrl-left"  class="progress-bar" role="progressbar" style="width:5%; color:black; background-color:limegreen">
+               LEFT
+            </div>
+          </div>
+          <div class="progress" style="font-weight:bold; margin-bottom:2px;">
+            <div id="ai-ctrl-right" class="progress-bar" role="progressbar" style="width:5%; color:black; background-color:dodgerblue">
+               RIGHT
+            </div>
+          </div>
+          <div class="progress" style="font-weight:bold; margin-bottom:0px;">
+            <div id="ai-ctrl-brake" class="progress-bar" role="progressbar" style="width:5%; color:black; background-color:indianred">
+               BRAKE
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <div id="step-2" style="display: none">
-      <div id="ctrl-help">Click/Touch to continue.</div>
+    <div id="webcam-container" class="col-md-2" style="text-align:right;">
+      <img max-width="100%" style="max-height: 100px;" alt="Place Holder for Webcam" src="./NoCamera.png" />
     </div>
-    <div id="step-3" style="display: none">
-      <div id="progressbar"></div>
+  <div class="row">
+    <div class="col-md-12">
+        <div id="step-1" style="display: none">
+          <div id="global"></div>
+          <div id="title">
+          </div>
+          <div id="menucontainer">
+            <div id="menu">
+              <div id="start">Start</div>
+              <div id="s-controlType">Controls: Keyboard</div>
+              <div id="s-quality">Quality: High</div>
+              <div id="s-hud">HUD: On</div>
+              <div id="s-godmode" style="display: none">Godmode: Off</div>
+              <div id="s-credits">Credits</div>
+            </div>
+          </div>
+        </div>
+        <div id="step-2" style="display: none">
+          <div id="ctrl-help">Click/Touch to continue.</div>
+        </div>
+        <div id="step-3" style="display: none">
+          <div id="progressbar"></div>
+        </div>
+        <div id="step-4" style="display: none">
+          <div id="overlay" style="position: fixed;z-index: 1;"></div> 
+          <div id="main"></div>
+        </div>
+        <div id="step-5" style="display: none">
+          <div id="time"></div>
+          <div id="ctrl-help">Click/Touch to continue.</div>
+        </div>
+        <div id="credits" style="display: none">
+          <h3>Code</h3>
+          <p><b>Concept and Development</b><br>Thibaut Despoulain (BKcore)</p>
+          <p><b>Contributors</b><br>townxelliot<br>mahesh.kk</p>
+          <p><b>Technologies</b><br>WebGL<br>JavaScript<br>CoffeeScript<br>Three.js<br>LeapMotion</p>
+          <h3>Graphics</h3>
+          <p><b>HexMKI base model</b><br>Charnel</p>
+          <p><b>Track texture</b><br>Nobiax</p>
+          <h4>Click anywhere to continue.</h4>
+        </div>
+        <div id="leapinfo" style="display: none"></div>
     </div>
-    <div id="step-4" style="display: none">
-      <div id="overlay"></div>
-      <div id="main"></div>
-    </div>
-    <div id="step-5" style="display: none">
-      <div id="time"></div>
-      <div id="ctrl-help">Click/Touch to continue.</div>
-    </div>
-    <div id="credits" style="display: none">
-      <h3>Code</h3>
-      <p><b>Concept and Development</b><br>Thibaut Despoulain (BKcore)</p>
-      <p><b>Contributors</b><br>townxelliot<br>mahesh.kk</p>
-      <p><b>Technologies</b><br>WebGL<br>JavaScript<br>CoffeeScript<br>Three.js<br>LeapMotion</p>
-      <h3>Graphics</h3>
-      <p><b>HexMKI base model</b><br>Charnel</p>
-      <p><b>Track texture</b><br>Nobiax</p>
-      <h4>Click anywhere to continue.</h4>
-    </div>
+  </div>
+  </div>
 
-    <div id="leapinfo" style="display: none"></div>
-
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/scripts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/pose@0.8/dist/teachablemachine-pose.min.js"></script>
     <script src="libs/leap-0.4.1.min.js"></script>
     <script src="libs/Three.dev.js"></script>
     <script src="libs/ShaderExtras.js"></script>
@@ -115,7 +138,6 @@
     <script src="libs/Detector.js"></script>
     <script src="libs/Stats.js"></script>
     <script src="libs/DAT.GUI.min.js"></script>
-
     <script src="bkcore.coffee/controllers/TouchController.js"></script>
     <script src="bkcore.coffee/controllers/OrientationController.js"></script>
     <script src="bkcore.coffee/controllers/GamepadController.js"></script>

@@ -12,119 +12,122 @@ let poseNet = false;
     return document.getElementById(_);
   };
 
-// Load the image model and setup the webcam
-init_boom = async function () {
-    const modelURL = URL + "model.json";
-    const metadataURL = URL + "metadata.json";
+  // Load the image model and setup the webcam
+  init_boom = async function () {
+      const modelURL = URL + "model.json";
+      const metadataURL = URL + "metadata.json";
 
-    // load the model and metadata
-    // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
-    // or files from your local hard drive
-    // Note: the pose library adds "tmImage" object to your window (window.tmImage)
-    const uploadModel = document.getElementById('upload-model');
-    const uploadWeights = document.getElementById('upload-weights');
-    const uploadMetadata = document.getElementById('upload-metadata');
+      // load the model and metadata
+      // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
+      // or files from your local hard drive
+      // Note: the pose library adds "tmImage" object to your window (window.tmImage)
+      const uploadModel = document.getElementById('model');
+      const uploadWeights = document.getElementById('weights');
+      const uploadMetadata = document.getElementById('metadata');
 
-    if(poseNet){
-      model = await tmPose.loadFromFiles(uploadModel.files[0], uploadWeights.files[0], uploadMetadata.files[0])
-    }
-    else{
-      model = await tmImage.loadFromFiles(uploadModel.files[0], uploadWeights.files[0], uploadMetadata.files[0])
-    }
-    
-    
-
-    maxPredictions = model.getTotalClasses();
-
-    // Convenience function to setup a webcam
-    const size = 150;
-    const flip = true; // whether to flip the webcam
-    if(poseNet){
-      webcam = new tmPose.Webcam(size, size, flip)
-    }
-    else{
-      webcam = new tmImage.Webcam(size, size, flip); // width, height, flip
-    }
-    await webcam.setup(); // request access to the webcam
-    await webcam.play();
-    window.requestAnimationFrame(loop_teachable);
-
-    // append elements to the DOM
-    document.getElementById("webcam-container").appendChild(webcam.canvas);
-    labelContainer = document.getElementById("label-container");
-    for (let i = 0; i < maxPredictions; i++) { // and class labels
-        labelContainer.appendChild(document.createElement("div"));
-    }
-}
-
-async function loop_teachable() {
-    webcam.update(); // update the webcam frame
-    await predict();
-    setTimeout(function(){ window.requestAnimationFrame(loop_teachable) }, 100);
-}
-// run the webcam image through the image model
-async function predict() {
-    // predict can take in an image, video or canvas html element
-    // Prediction #1: run input through posenet
-    // estimatePose can take in an image, video or canvas html element
-    let prediction;
-    if(poseNet){
-      const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
-      // Prediction 2: run input through teachable machine classification model
-      prediction = await model.predict(posenetOutput);
-    }
-    else{
-      prediction = await model.predict(webcam.canvas);
-    }
-    let max_id=-1;
-    let max_value=0;
-    for (let i = 0; i < maxPredictions; i++) {
-        const classPrediction =
-            prediction[i].className + ": " + prediction[i].probability.toFixed(2);
-        labelContainer.childNodes[i].innerHTML = classPrediction;
-        if(prediction[i].probability > max_value){
-            max_value = prediction[i].probability;
-            max_id = i;
-        }
-    }
-    if(window.hexGL !== undefined){
-      switch(max_id){
-        case 0: /*straight*/
-          window.hexGL.gameplay.shipControls.key.forward = true;
-          window.hexGL.gameplay.shipControls.key.left = false;
-          window.hexGL.gameplay.shipControls.key.right = false;
-          window.hexGL.gameplay.shipControls.key.ltrigger = false;
-          window.hexGL.gameplay.shipControls.key.rtrigger = false;
-          break;
-        case 1: /*left*/
-          window.hexGL.gameplay.shipControls.key.forward = true;
-          window.hexGL.gameplay.shipControls.key.left = true;
-          window.hexGL.gameplay.shipControls.key.right = false;
-          window.hexGL.gameplay.shipControls.key.ltrigger = false;
-          window.hexGL.gameplay.shipControls.key.rtrigger = false;
-          break;
-        case 2: /*right*/
-          window.hexGL.gameplay.shipControls.key.forward = true;
-          window.hexGL.gameplay.shipControls.key.right = true;
-          window.hexGL.gameplay.shipControls.key.left = false;
-          window.hexGL.gameplay.shipControls.key.ltrigger = false;
-          window.hexGL.gameplay.shipControls.key.rtrigger = false;
-          break;
-        case 4: /*break*/
-          window.hexGL.gameplay.shipControls.key.ltrigger = true;
-          window.hexGL.gameplay.shipControls.key.rtrigger = true;
-          window.hexGL.gameplay.shipControls.key.forward = false;
-          window.hexGL.gameplay.shipControls.key.left = false;
-          window.hexGL.gameplay.shipControls.key.right = false;
-          break;
+      if(poseNet){
+        model = await tmPose.loadFromFiles(uploadModel.files[0], uploadWeights.files[0], uploadMetadata.files[0])
       }
-    }
+      else{
+        model = await tmImage.loadFromFiles(uploadModel.files[0], uploadWeights.files[0], uploadMetadata.files[0])
+      }
+      
+      
 
-}
+      maxPredictions = model.getTotalClasses();
 
-init_star = function(){
-  return init(s[0][3], s[1][0], s[2][3], s[3][3]);
-}
+      // Convenience function to setup a webcam
+      const size = 150;
+      const flip = true; // whether to flip the webcam
+      if(poseNet){
+        webcam = new tmPose.Webcam(size, size, flip)
+      }
+      else{
+        webcam = new tmImage.Webcam(size, size, flip); // width, height, flip
+      }
+      await webcam.setup(); // request access to the webcam
+      await webcam.play();
+      window.requestAnimationFrame(loop_teachable);
+
+      // append elements to the DOM
+      document.getElementById("webcam-container").innerHTML = "";
+      document.getElementById("webcam-container").appendChild(webcam.canvas);
+      // labelContainer = document.getElementById("label-container");
+      // for (let i = 0; i < maxPredictions; i++) { // and class labels
+      //     labelContainer.appendChild(document.createElement("div"));
+      // }
+  }
+
+  async function loop_teachable() {
+      webcam.update(); // update the webcam frame
+      await predict();
+      setTimeout(function(){ window.requestAnimationFrame(loop_teachable) }, 100);
+  }
+  // run the webcam image through the image model
+  async function predict() {
+      // predict can take in an image, video or canvas html element
+      // Prediction #1: run input through posenet
+      // estimatePose can take in an image, video or canvas html element
+      let prediction;
+      if(poseNet){
+        const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
+        // Prediction 2: run input through teachable machine classification model
+        prediction = await model.predict(posenetOutput);
+      }
+      else{
+        prediction = await model.predict(webcam.canvas);
+      }
+      let max_id=-1;
+      let max_value=0;
+      names = ['ai-ctrl-neutral','ai-ctrl-left','ai-ctrl-right','ai-ctrl-brake'];
+      for (let i = 0; i < maxPredictions; i++) {
+          // const classPrediction =
+          //     prediction[i].className + ": " + prediction[i].probability.toFixed(2);
+          // labelContainer.childNodes[i].innerHTML = classPrediction;
+          jQuery(`#${names[i]}`).css('width',`${Math.round(100*prediction[i].probability)}%`)
+          if(prediction[i].probability > max_value){
+              max_value = prediction[i].probability;
+              max_id = i;
+          }
+      }
+      if(window.hexGL !== undefined){
+        switch(max_id){
+          case 0: /*straight*/
+            window.hexGL.gameplay.shipControls.key.forward = true;
+            window.hexGL.gameplay.shipControls.key.left = false;
+            window.hexGL.gameplay.shipControls.key.right = false;
+            window.hexGL.gameplay.shipControls.key.ltrigger = false;
+            window.hexGL.gameplay.shipControls.key.rtrigger = false;
+            break;
+          case 1: /*left*/
+            window.hexGL.gameplay.shipControls.key.forward = true;
+            window.hexGL.gameplay.shipControls.key.left = true;
+            window.hexGL.gameplay.shipControls.key.right = false;
+            window.hexGL.gameplay.shipControls.key.ltrigger = false;
+            window.hexGL.gameplay.shipControls.key.rtrigger = false;
+            break;
+          case 2: /*right*/
+            window.hexGL.gameplay.shipControls.key.forward = true;
+            window.hexGL.gameplay.shipControls.key.right = true;
+            window.hexGL.gameplay.shipControls.key.left = false;
+            window.hexGL.gameplay.shipControls.key.ltrigger = false;
+            window.hexGL.gameplay.shipControls.key.rtrigger = false;
+            break;
+          case 4: /*break*/
+            window.hexGL.gameplay.shipControls.key.ltrigger = true;
+            window.hexGL.gameplay.shipControls.key.rtrigger = true;
+            window.hexGL.gameplay.shipControls.key.forward = false;
+            window.hexGL.gameplay.shipControls.key.left = false;
+            window.hexGL.gameplay.shipControls.key.right = false;
+            break;
+        }
+      }
+
+  }
+
+  init_star = function(){
+    return init(s[0][3], s[1][0], s[2][3], s[3][3]);
+  }
 
   init = function(controlType, quality, hud, godmode) {
     var hexGL, progressbar;
