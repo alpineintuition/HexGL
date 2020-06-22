@@ -89,22 +89,30 @@ async function predict() {
     }
     if(window.hexGL !== undefined){
       switch(max_id){
-        case 0: /*left*/
+        case 0: /*straight*/
+          window.hexGL.gameplay.shipControls.key.forward = true;
+          window.hexGL.gameplay.shipControls.key.left = false;
+          window.hexGL.gameplay.shipControls.key.right = false;
+          window.hexGL.gameplay.shipControls.key.ltrigger = false;
+          window.hexGL.gameplay.shipControls.key.rtrigger = false;
+          break;
+        case 1: /*left*/
           window.hexGL.gameplay.shipControls.key.forward = true;
           window.hexGL.gameplay.shipControls.key.left = true;
           window.hexGL.gameplay.shipControls.key.right = false;
+          window.hexGL.gameplay.shipControls.key.ltrigger = false;
+          window.hexGL.gameplay.shipControls.key.rtrigger = false;
           break;
-        case 1: /*right*/
+        case 2: /*right*/
           window.hexGL.gameplay.shipControls.key.forward = true;
           window.hexGL.gameplay.shipControls.key.right = true;
           window.hexGL.gameplay.shipControls.key.left = false;
+          window.hexGL.gameplay.shipControls.key.ltrigger = false;
+          window.hexGL.gameplay.shipControls.key.rtrigger = false;
           break;
-        case 2: /*straight*/
-          window.hexGL.gameplay.shipControls.key.forward = true;
-          window.hexGL.gameplay.shipControls.key.left = false;
-          window.hexGL.gameplay.shipControls.key.right = false;
-          break;
-        case 3:
+        case 4: /*break*/
+          window.hexGL.gameplay.shipControls.key.ltrigger = true;
+          window.hexGL.gameplay.shipControls.key.rtrigger = true;
           window.hexGL.gameplay.shipControls.key.forward = false;
           window.hexGL.gameplay.shipControls.key.left = false;
           window.hexGL.gameplay.shipControls.key.right = false;
