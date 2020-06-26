@@ -113,7 +113,7 @@ let poseNet = false;
             window.hexGL.gameplay.shipControls.key.ltrigger = false;
             window.hexGL.gameplay.shipControls.key.rtrigger = false;
             break;
-          case 4: /*break*/
+          case 3: /*break*/
             window.hexGL.gameplay.shipControls.key.ltrigger = true;
             window.hexGL.gameplay.shipControls.key.rtrigger = true;
             window.hexGL.gameplay.shipControls.key.forward = false;

@@ -66,7 +66,7 @@ bkcore.hexgl.HexGL = function(opts)
 
 	this.gameover = opts.gameover == undefined ? null : opts.gameover;
 
-	this.godmode = opts.godmode == undefined ? false : opts.godmode;
+	this.godmode = opts.godmode == undefined ? true : opts.godmode;
 
 	this.hud = null;
 
@@ -407,16 +407,16 @@ bkcore.hexgl.HexGL.prototype.tweakShipControls = function()
 		c.airResist = 0.035;
 		c.airDrift = 0.07;
 		c.thrust = 0.035;
-		c.airBrake = 0.04;
-		c.maxSpeed = 9.6;
+		c.airBrake = 0.04; /* initialy 0.04 */
+		c.maxSpeed = 5; /* initialy 9.6 */
 		c.boosterSpeed = c.maxSpeed * 0.35;
 		c.boosterDecay = 0.007;
-		c.angularSpeed = 0.0140;
+		c.angularSpeed = 0.0070; /* initialy 0.0140 */
 		c.airAngularSpeed = 0.0165;
-		c.rollAngle = 0.6;
-		c.shieldDamage = 0.03;
-		c.collisionSpeedDecrease = 0.8;
-		c.collisionSpeedDecreaseCoef = 0.5;
+		c.rollAngle = 0.3; /* initialy 0.6 */
+		c.shieldDamage = 0.0; /* initialy 0.03 */
+		c.collisionSpeedDecrease = 0.2; /* initialy 0.8 */
+		c.collisionSpeedDecreaseCoef = 0.8; /* initialy 0.5 */
 		c.rollLerp = 0.1;
 		c.driftLerp = 0.4;
 		c.angularLerp = 0.4;
@@ -426,16 +426,16 @@ bkcore.hexgl.HexGL.prototype.tweakShipControls = function()
 		c.airResist = 0.02;
 		c.airDrift = 0.06;
 		c.thrust = 0.02;
-		c.airBrake = 0.025;
-		c.maxSpeed = 7.0;
+		c.airBrake = 0.025; /* initialy 0.025 */
+		c.maxSpeed = 5; /* initialy 7.0 */
 		c.boosterSpeed = c.maxSpeed * 0.5;
 		c.boosterDecay = 0.007;
-		c.angularSpeed = 0.0125;
+		c.angularSpeed = 0.0070; /* initialy 0.0125 */
 		c.airAngularSpeed = 0.0135;
-		c.rollAngle = 0.6;
-		c.shieldDamage = 0.06;
-		c.collisionSpeedDecrease = 0.8;
-		c.collisionSpeedDecreaseCoef = 0.5;
+		c.rollAngle = 0.3; /* initialy 0.6 */
+		c.shieldDamage = 0.0; /* initialy 0.03 */
+		c.collisionSpeedDecrease = 0.2; /* initialy 0.8 */
+		c.collisionSpeedDecreaseCoef = 0.8; /* initialy 0.5 */
 		c.rollLerp = 0.07;
 		c.driftLerp = 0.3;
 		c.angularLerp = 0.4;
