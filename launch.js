@@ -31,8 +31,6 @@ let poseNet = false;
       else{
         model = await tmImage.loadFromFiles(uploadModel.files[0], uploadWeights.files[0], uploadMetadata.files[0])
       }
-      
-      
 
       maxPredictions = model.getTotalClasses();
 
@@ -92,7 +90,7 @@ let poseNet = false;
       }
       if(window.hexGL !== undefined){
         switch(max_id){
-          case 0: /*straight*/
+          case 0: /*forward*/
             window.hexGL.gameplay.shipControls.key.forward = true;
             window.hexGL.gameplay.shipControls.key.left = false;
             window.hexGL.gameplay.shipControls.key.right = false;
@@ -113,7 +111,7 @@ let poseNet = false;
             window.hexGL.gameplay.shipControls.key.ltrigger = false;
             window.hexGL.gameplay.shipControls.key.rtrigger = false;
             break;
-          case 3: /*break*/
+          case 3: /*brake*/
             window.hexGL.gameplay.shipControls.key.ltrigger = true;
             window.hexGL.gameplay.shipControls.key.rtrigger = true;
             window.hexGL.gameplay.shipControls.key.forward = false;
