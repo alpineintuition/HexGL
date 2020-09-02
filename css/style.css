@@ -162,11 +162,7 @@ progress::-moz-progress-bar {
     transition: transform .2s; /* Animation */
 }
 
-    .tuto-img:hover {
-        -ms-transform: translateX(145px) scale(1.5); /* IE 9 */
-        -webkit-transform: translateX(145px) scale(1.5); /* Safari 3-8 */
-        transform: translateX(145px) scale(1.5);
-    }
+
 
 .tuto-list {
     padding-top: 30px;
